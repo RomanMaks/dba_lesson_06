@@ -12,7 +12,7 @@
     product_id BIGINT UNSIGNED NOT NULL,
     event ENUM('create', 'price', 'delete') NOT NULL,
     old_price DECIMAL(10, 2),
-    new_price DECIMAL(10, 2) NOT NULL,
+    new_price DECIMAL(10, 2),
     created_at DATETIME NOT NULL
   )
 
