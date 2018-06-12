@@ -17,7 +17,7 @@
   )
 
   -- создание нового (create)
-  CREATE TRIGGER product_creat AFTER INSERT ON products
+  CREATE TRIGGER creation_product AFTER INSERT ON products
   FOR EACH ROW
     BEGIN
       INSERT INTO change_history
@@ -29,7 +29,7 @@
     END;
 
   -- изменение цены (price)
-  CREATE TRIGGER price BEFORE UPDATE ON products
+  CREATE TRIGGER changes_price BEFORE UPDATE ON products
   FOR EACH ROW
     IF (OLD.price != NEW.price) THEN
       BEGIN
@@ -44,7 +44,7 @@
     END IF;
 
   -- удаление товара (delete)
-  CREATE TRIGGER product_delete AFTER DELETE ON products
+  CREATE TRIGGER deleting_product AFTER DELETE ON products
   FOR EACH ROW
     BEGIN
       INSERT INTO change_history
@@ -55,7 +55,20 @@
         created_at = CURRENT_TIMESTAMP;
     END;
 
--- 3. Заполните таблицу случайными, но осмысленными данными
-
 -- 4. Создайте представления "Новые товары" и "Товары, цена 
 --    которых изменялась не менее 3 раз"
+
+  -- новые товары
+  CREATE VIEW new_products AS
+  SELECT  products.*
+  FROM change_history
+    INNER JOIN products ON change_history.product_id = products.id
+  WHERE event = 'create'
+
+  -- товары, цена которых изменялась не менее 3 раз
+  CREATE VIEW changed_at_least_three_times AS
+  SELECT  products.*, COUNT(change_history.product_id) AS changed
+  FROM change_history
+    INNER JOIN products ON change_history.product_id = products.id
+  GROUP BY change_history.product_id
+  HAVING COUNT(change_history.product_id) >= 3
