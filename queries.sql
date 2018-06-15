@@ -16,44 +16,19 @@
     created_at DATETIME NOT NULL
   )
 
-  -- создание нового (create)
-  CREATE TRIGGER creation_product AFTER INSERT ON products
-  FOR EACH ROW
-    BEGIN
-      INSERT INTO change_history
-      SET
-        product_id = NEW.id,
-        event = 'create',
-        new_price = NEW.price,
-        created_at = CURRENT_TIMESTAMP;
-    END;
-
-  -- изменение цены (price)
-  CREATE TRIGGER changes_price BEFORE UPDATE ON products
-  FOR EACH ROW
-    IF (OLD.price != NEW.price) THEN
-      BEGIN
-        INSERT INTO change_history
-        SET
-          product_id = OLD.id,
-          event = 'price',
-          old_price = OLD.price,
-          new_price = NEW.price,
-          created_at = CURRENT_TIMESTAMP;
-      END;
-    END IF;
-
-  -- удаление товара (delete)
-  CREATE TRIGGER deleting_product AFTER DELETE ON products
-  FOR EACH ROW
-    BEGIN
-      INSERT INTO change_history
-      SET
-        product_id = OLD.id,
-        event = 'delete',
-        old_price = OLD.price,
-        created_at = CURRENT_TIMESTAMP;
-    END;
+-- 3. Заполните таблицу случайными, но осмысленными данными
+  INSERT INTO change_history (
+    product_id,
+    event,
+    old_price,
+    new_price,
+    created_at
+  ) 
+  VALUES 
+  (1 , 'price',  1500.00, 1700.00, '2018-06-12 16:18:09'),
+  (10, 'price',  60.00,   50.00,   '2018-06-12 16:47:04'),
+  (25, 'create', null,    50.00,   '2018-06-12 17:06:56'),
+  (25, 'delete', 50.00,   null,    '2018-06-12 17:12:03')
 
 -- 4. Создайте представления "Новые товары" и "Товары, цена 
 --    которых изменялась не менее 3 раз"
