@@ -13,7 +13,7 @@
     event ENUM('create', 'price', 'delete') NOT NULL,
     old_price DECIMAL(10, 2),
     new_price DECIMAL(10, 2),
-    created_at DATETIME NOT NULL
+    affected_at DATETIME NOT NULL
   )
 
 -- 3. Заполните таблицу случайными, но осмысленными данными
@@ -22,7 +22,7 @@
     event,
     old_price,
     new_price,
-    created_at
+    affected_at
   ) 
   VALUES 
   (1 , 'price',  1500.00, 1700.00, '2018-06-12 16:18:09'),
